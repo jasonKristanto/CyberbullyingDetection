@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyberbullying Detection</title>
+
+    <link rel="stylesheet" href="{{url_for('static', filename='bootstrap/css/bootstrap.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='bootstrap/css/bootstrap.min.css')}}">
+</head>
+<body>
+    <div class="container-fluid">
+        <nav class="row navbar navbar-expand-lg navbar-light bg-primary mb-2">
+            <a href="{{ url_for('index') }}" class="navbar-brand rounded text-white">
+                <h5>Cyberbullying Comment Detector</h5>
+            </a>
+        </nav>
+
+        <div class="row" style="height: 125px;">
+            <div class="col">
+                <div class="form-group">
+                    <div style="height: 75px;">
+                        <form action="/detect" method="POST">
+                            <div class="row form-group m-auto">
+                                <input class="col-12 form-control" type="text" name="text" placeholder="Input your text here...">
+                                <input class="col-12 btn btn-outline-primary" type="submit" name="detect_text" value="Detect Comment">
+                            </div>
+                        </form>
+                        {% with messages = get_flashed_messages(with_categories=True) %}
+                            {% if messages %}
+                                {% for category, message in messages %}
+                                    {% if category == "error_text": %}
+                                        <div class="row">
+                                            <p class="col-12 text-danger text-center">{{ message }}</p>
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        {% endwith %}
+                    </div>            
+                </div>
+            </div>
+            <div class="col-2 pt-4">
+                <div class="form-group">
+                    <div class="row"><h4 class="m-auto">OR</h4></div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <div style="height: 75px;">
+                        <form action="/detect_file" method="POST" enctype="multipart/form-data">
+                            <div class="row form-group m-auto">
+                                <input class="col-12 form-control-file" type="file" name="table" style="padding-bottom: 0.5rem; padding-left: 0;">
+                                <input class="col-12 btn btn-outline-primary" type="submit" name="detect_file" value="Detect Comments">
+                            </div>            
+                        </form>
+                        
+                        {% with messages = get_flashed_messages(with_categories=True) %}
+                            {% if messages %}
+                                {% for category, message in messages %}
+                                    {% if category == "error_file": %}
+                                        <div class="row">
+                                            <p class="col-12 text-danger text-center">{{ message }}</p>
+                                        </div>                            
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        {% endwith %}
+                    </div>
+                </div> 
+            </div>
+        </div>
+        
+        <div class="form-group row pt-2">
+            <div class="col-2"></div>
+            <div class="col" style="height: 415px; overflow: auto;">
+                <div class="row bg-light text-dark mx-0 border border-light">
+                    <div class="col-9 font-weight-bold text py-3 border-top border-left border-bottom border-dark">Text</div>
+                    <div class="col-3 font-weight-bold py-3 border border-dark text-center">Prediction Result</div>
+                </div>
+            
+                {% if category == 'text': %}
+                    {% if result: %}                
+                        {% if 'text' in result and 'predict_result' in result: %} 
+                        <div class="row text-dark mx-0 border border-light">
+                                <div class="col-9 py-2 border-top border-left border-bottom border-dark">{{ result['text'] }}</div>
+                                <div class="col-3 py-2 border border-dark text-center">{{ result['predict_result'] }}</div>
+                            </div>
+                        {% endif %}              
+                    {% endif %}                
+                {% elif category == 'table': %}
+                    {% if results: %}
+                        {% for result in results: %}
+                            {% if 'text' in results[result] and 'predict_result' in results[result]: %}
+                                <div class="row text-dark mx-0 border border-light">
+                                    <div class="col-9 py-2 border-top border-left border-bottom border-dark ">{{ results[result]['text'] }}</div>
+                                    <div class="col-3 py-2 border border-dark text-center">{{ results[result]['predict_result'] }}</div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                {% else: %}
+                    <div class="row text-dark mx-0 border border-light">
+                        <div class="col-12 py-2 border border-dark text-center">Result not obtained yet</div>
+                    </div>    
+                {% endif %}
+            </div>
+            <div class="col-2"></div>
+            
+        </div>
+    </div>        
+        
+
+    <script src="{{url_for('static', filename='jquery/jquery-3.4.1.min.js')}}"></script>
+    <script src="{{url_for('static', filename='bootstrap/js/bootstrap.js')}}"></script>
+    <script src="{{url_for('static', filename='bootstrap/js/bootstrap.min.js')}}"></script>    
+</body>
+</html>
