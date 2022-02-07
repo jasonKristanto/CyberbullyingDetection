@@ -57,7 +57,7 @@ def prediction(pred):
 
 def fasttext(word_index):
     # get the vectors
-    loaded_ft = FastText.load("ft_model_300_andriansyah_defaultconfig.bin")
+    loaded_ft = FastText.load("ft_model_100_andriansyah_defaultconfig.bin")
 
     embedding_matrix = np.zeros((len(word_index)+1, 100))
     word_not_found = []
